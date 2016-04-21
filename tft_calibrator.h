@@ -1,6 +1,9 @@
 #ifndef TFT_CALIBRATOR_H
 #define TFT_CALIBRATOR_H
 
+#include "SPFD5408_TouchScreen.h"
+#include "SPFD5408_Adafruit_GFX.h"
+
 typedef struct calibration_pair_t{
 	uint16_t tft;
 	uint16_t touch;
@@ -14,12 +17,11 @@ private:
 	calibration_pair_t _x[2];
 	calibration_pair_t _y[2];
 	
-	const uint16_t _fixed_calibration_points[2];
-	
 	Adafruit_GFX &_tft;
 	TouchScreen &_touch;
 	
-	void addCalibrationPoint();
+	void addCalibrationPoint(TSPoint p);
+	void drawNextCalibrationPoint();
 
 public:
 	TFTCalibrator(Adafruit_GFX &tft, TouchScreen &touch);

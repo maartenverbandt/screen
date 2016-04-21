@@ -179,7 +179,7 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
   _rxplate = 0;
   pressureThreshhold = 10;
   
-  _tft(0),
+  _tft = NULL;
   
   //Calibration parameters
   _offset_x = 0;
@@ -188,7 +188,7 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
   _scale_y = 1.0f;
 }
 
-TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX &tft) {
+TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX *tft) {
   _yp = yp;
   _xm = xm;
   _ym = ym;
@@ -196,7 +196,7 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafrui
   _rxplate = 0;
   pressureThreshhold = 10;
   
-  _tft(tft),
+  _tft = tft;
   
   //Calibration parameters
   _offset_x = 0;
@@ -207,7 +207,7 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafrui
 
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
-			 uint16_t rxplate, Adafruit_GFX &tft) {
+			 uint16_t rxplate, Adafruit_GFX *tft) {
   _yp = yp;
   _xm = xm;
   _ym = ym;
@@ -215,7 +215,7 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
   _rxplate = rxplate;
   pressureThreshhold = 10;
   
-  _tft(tft),
+  _tft = tft;
   
   //Calibration parameters
   _offset_x = 0;
@@ -295,33 +295,33 @@ TSPoint TouchScreen::calibrate(TSPoint p)
     p.x = (p.x + _offset_x)*_scale_x;
     p.y = (p.y + _offset_y)*_scale_y;
 
-	switch(rotation) {
+	switch(_tft->getRotation()) {
 		case 1:
 			t = p.x;
-			p.x = _tft.width()  - 1 - p.y;
+			p.x = _tft->width()  - 1 - p.y;
 			p.y = t;
 			break;
 		case 2:
-			p.x = _tft.width()  - 1 - p.x;
-			p.y = _tft.height() - 1 - p.y;
+			p.x = _tft->width()  - 1 - p.x;
+			p.y = _tft->height() - 1 - p.y;
 			break;
 		case 3:
 			t = p.x;
 			p.x = p.y;
-			p.y = _tft.height() - 1 - t;
+			p.y = _tft->height() - 1 - t;
 			break;
 	}
 
 	return p;
 }
 
-void setOffset(int16_t offset_x, int16_t offset_y)
+void TouchScreen::setOffset(int16_t offset_x, int16_t offset_y)
 {
 	_offset_x = offset_x;
 	_offset_y = offset_y;
 }
 
-void setScale(int16_t scale_x, int16_t scale_y)
+void TouchScreen::setScale(int16_t scale_x, int16_t scale_y)
 {
 	_scale_x = scale_x;
 	_scale_y = scale_y;

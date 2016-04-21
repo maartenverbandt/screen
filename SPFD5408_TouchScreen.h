@@ -6,6 +6,7 @@
 #ifndef _ADAFRUIT_TOUCHSCREEN_H_
 #define _ADAFRUIT_TOUCHSCREEN_H_
 #include <stdint.h>
+#include "SPFD5408_Adafruit_GFX.h"
 
 class TSPoint {
  public:
@@ -21,8 +22,8 @@ class TSPoint {
 class TouchScreen {
  public:
   TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym);
-  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX &tft);
-  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx, Adafruit_GFX &tft);
+  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX *tft);
+  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx, Adafruit_GFX *tft);
 
   bool isTouching(void);
   uint16_t pressure(void);
@@ -38,7 +39,7 @@ class TouchScreen {
 private:
   uint8_t _yp, _ym, _xm, _xp;
   uint16_t _rxplate;
-  Adafruit_GFX &_tft;
+  Adafruit_GFX *_tft;
   
   int16_t _offset_x, _offset_y;
   float _scale_x, _scale_y;

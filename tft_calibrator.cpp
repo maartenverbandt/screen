@@ -16,7 +16,7 @@ void TFTCalibrator::startCalibration(uint16_t number_of_points)
 	_calibration_pair_counter = 0;
 	_calibration_pair_goal = number_of_points;
 	
-	tft.setRotation(0);
+	_tft.setRotation(0);
 }
 
 void TFTCalibrator::drawCalibrationPoint(uint16_t x, uint16_t y)
@@ -24,8 +24,8 @@ void TFTCalibrator::drawCalibrationPoint(uint16_t x, uint16_t y)
 	_x[_calibration_pair_counter].tft = x;
 	_y[_calibration_pair_counter].tft = y;
 	
-	tft.fillScreen(BLACK);
-	tft.fillCircle(x,y,4,WHITE);
+	_tft.fillScreen(0x00);
+	_tft.fillCircle(x,y,4,0xFF);
 }
 
 void TFTCalibrator::finishCalibration()
@@ -44,7 +44,7 @@ bool TFTCalibrator::update()
 {
 	if(_calibration_pair_counter < _calibration_pair_goal){
 		//retrieve a point from the touch screen
-		TSPoint p = touch.getPoint();
+		TSPoint p = _touch.getPoint();
 		
 		//check if the point is different from the previous point. If not: skip it.
 		if((_calibration_pair_counter>0) && (NORM2(p.x - _x[_calibration_pair_counter-1].touch) + NORM2(p.y - _y[_calibration_pair_counter-1].touch)) < 400){
@@ -76,9 +76,9 @@ void TFTCalibrator::addCalibrationPoint(TSPoint p)
 void TFTCalibrator::drawNextCalibrationPoint()
 {
 	switch(_calibration_pair_counter){
-		case 0: drawCalibrationPoint(tft.width*0.1, tft.height*0.1); break;
-		case 1: drawCalibrationPoint(tft.width*0.9, tft.height*0.9); break;
-		case 2: drawCalibrationPoint(tft.width*0.9, tft.height*0.1); break;
-		case 3: drawCalibrationPoint(tft.width*0.1, tft.height*0.9); break;
+		case 0: drawCalibrationPoint(_tft.width()*0.1, _tft.height()*0.1); break;
+		case 1: drawCalibrationPoint(_tft.width()*0.9, _tft.height()*0.9); break;
+		case 2: drawCalibrationPoint(_tft.width()*0.9, _tft.height()*0.1); break;
+		case 3: drawCalibrationPoint(_tft.width()*0.1, _tft.height()*0.9); break;
 	}
 }
