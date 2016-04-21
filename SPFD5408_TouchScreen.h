@@ -21,18 +21,28 @@ class TSPoint {
 class TouchScreen {
  public:
   TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym);
-  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx);
+  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX &tft);
+  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx, Adafruit_GFX &tft);
 
   bool isTouching(void);
   uint16_t pressure(void);
   int readTouchY();
   int readTouchX();
   TSPoint getPoint();
+  TSPoint getTFTPoint();
   int16_t pressureThreshhold;
+  
+  void setOffset(int16_t offset_x, int16_t offset_y);
+  void setScale(int16_t scale_x, int16_t scale_y);
 
 private:
   uint8_t _yp, _ym, _xm, _xp;
   uint16_t _rxplate;
+  Adafruit_GFX &_tft;
+  
+  int16_t _offset_x, _offset_y;
+  float _scale_x, _scale_y;
+  TSPoint calibrate(TSPoint p);
 };
 
 #endif

@@ -156,13 +156,19 @@ TSPoint TouchScreen::getPoint(void) {
      z = 0;
    }
 
-   //return TSPoint(x, y, z);
+   return TSPoint(x, y, z);
 
    // *** SPFD5408 change -- Begin
    // SPFD5408 change, because Y coordinate is inverted in this controller
    // new values taken from http://stackoverflow.com/questions/34652970/2-4-inch-tft-lcd-spfd5408-with-arduino-uno-touch-not-working
-   return TSPoint(1100 - x, 1043 - y, z);
+   //return TSPoint(1100 - x, 1043 - y, z);
+   //return calibrate(TSPoint(x,y,z));
    // -- End
+}
+
+TSPoint TouchScreen::getTFTPoint()
+{
+	return calibrate(getPoint());
 }
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
@@ -172,18 +178,50 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
   _xp = xp;
   _rxplate = 0;
   pressureThreshhold = 10;
+  
+  _tft(0),
+  
+  //Calibration parameters
+  _offset_x = 0;
+  _offset_y = 0;
+  _scale_x = 1.0f;
+  _scale_y = 1.0f;
+}
+
+TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, Adafruit_GFX &tft) {
+  _yp = yp;
+  _xm = xm;
+  _ym = ym;
+  _xp = xp;
+  _rxplate = 0;
+  pressureThreshhold = 10;
+  
+  _tft(tft),
+  
+  //Calibration parameters
+  _offset_x = 0;
+  _offset_y = 0;
+  _scale_x = 1.0f;
+  _scale_y = 1.0f;
 }
 
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
-			 uint16_t rxplate) {
+			 uint16_t rxplate, Adafruit_GFX &tft) {
   _yp = yp;
   _xm = xm;
   _ym = ym;
   _xp = xp;
   _rxplate = rxplate;
-
   pressureThreshhold = 10;
+  
+  _tft(tft),
+  
+  //Calibration parameters
+  _offset_x = 0;
+  _offset_y = 0;
+  _scale_x = 1.0f;
+  _scale_y = 1.0f;
 }
 
 int TouchScreen::readTouchX(void) {
@@ -249,3 +287,44 @@ uint16_t TouchScreen::pressure(void) {
     return (1023-(z2-z1));
   }
 }
+
+// Calibration
+TSPoint TouchScreen::calibrate(TSPoint p)
+{
+    uint16_t t;
+    p.x = (p.x + _offset_x)*_scale_x;
+    p.y = (p.y + _offset_y)*_scale_y;
+
+	switch(rotation) {
+		case 1:
+			t = p.x;
+			p.x = _tft.width()  - 1 - p.y;
+			p.y = t;
+			break;
+		case 2:
+			p.x = _tft.width()  - 1 - p.x;
+			p.y = _tft.height() - 1 - p.y;
+			break;
+		case 3:
+			t = p.x;
+			p.x = p.y;
+			p.y = _tft.height() - 1 - t;
+			break;
+	}
+
+	return p;
+}
+
+void setOffset(int16_t offset_x, int16_t offset_y)
+{
+	_offset_x = offset_x;
+	_offset_y = offset_y;
+}
+
+void setScale(int16_t scale_x, int16_t scale_y)
+{
+	_scale_x = scale_x;
+	_scale_y = scale_y;
+}
+
+
