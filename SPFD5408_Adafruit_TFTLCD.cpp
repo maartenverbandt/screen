@@ -48,7 +48,7 @@
 // Can still use this w/shield, but parameters are ignored.
 Adafruit_TFTLCD::Adafruit_TFTLCD(
   uint8_t cs, uint8_t cd, uint8_t wr, uint8_t rd, uint8_t reset) :
-  Adafruit_GFX(TFTWIDTH, TFTHEIGHT) {
+  Adafruit_GFX(TFTWIDTH, TFTHEIGHT), _cs(cs), _cd(cd), _wr(wr), _rd(rd) {
 
 #ifndef USE_ADAFRUIT_SHIELD_PINOUT
   // Convert pin numbers to registers and bitmasks
@@ -99,7 +99,7 @@ Adafruit_TFTLCD::Adafruit_TFTLCD(
 }
 
 // Constructor for shield (fixed LCD control lines)
-Adafruit_TFTLCD::Adafruit_TFTLCD(void) : Adafruit_GFX(TFTWIDTH, TFTHEIGHT) {
+Adafruit_TFTLCD::Adafruit_TFTLCD(void) : Adafruit_GFX(TFTWIDTH, TFTHEIGHT), _cs(0), _cd(0), _wr(0), _rd(0) {
   init();
 }
 

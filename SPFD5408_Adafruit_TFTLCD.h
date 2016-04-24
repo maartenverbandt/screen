@@ -51,7 +51,18 @@ class Adafruit_TFTLCD : public Adafruit_GFX {
            readID(void);
   uint32_t readReg(uint8_t r);
 
+	//Added by MaartenVerbandt:
+	bool getControl(){
+		pinMode(_cs, OUTPUT);    // Enable outputs
+		pinMode(_cd, OUTPUT);
+		pinMode(_wr, OUTPUT);
+		pinMode(_rd, OUTPUT);
+		return true;
+	}
+
  private:
+
+	const uint8_t _cs,_cd,_wr,_rd;
 
   void     init(),
            // These items may have previously been defined as macros
