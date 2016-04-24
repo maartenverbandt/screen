@@ -14,14 +14,17 @@ class TFTCalibrator
 private:
 	uint16_t _calibration_pair_counter;
 	uint16_t _calibration_pair_goal;
-	calibration_pair_t _x[2];
-	calibration_pair_t _y[2];
+	calibration_pair_t _x[4];
+	calibration_pair_t _y[4];
 	
 	Adafruit_GFX &_tft;
 	TouchScreen &_touch;
 	
-	void addCalibrationPoint(TSPoint p);
+	int16_t _offset_x, _offset_y;
+	float _scale_x, _scale_y;
+	
 	void drawNextCalibrationPoint();
+	void addCalibrationPoint(TSPoint p);
 
 public:
 	TFTCalibrator(Adafruit_GFX &tft, TouchScreen &touch);
@@ -31,8 +34,12 @@ public:
 	void finishCalibration();
 
 	bool update();
+	//bool updateSimple();
 	
-
+	int16_t offsetX();
+	int16_t offsetY();
+	float scaleX();
+	float scaleY();
 
 };
 
