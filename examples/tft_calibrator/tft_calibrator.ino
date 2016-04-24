@@ -40,24 +40,35 @@ static TFTCalibrator calibrator(tft,ts);
 static TSPoint pg;
 
 void setup(void) {
-	Serial.begin(9600);
+	Serial.begin(115200);
 
 	//tft setup
 	tft.reset();
 	tft.begin(0x9341);
-	tft.setRotation(0); // Need for the Mega, please changed for your choice or rotation initial 
+	tft.setRotation(1); // Need for the Mega, please changed for your choice or rotation initial 
+	
+	tft.fillScreen(GREEN);
+	delay(1000);
 	
 	calibrator.startCalibration();
 }	
 	
 void loop()
 {	
-	while(!calibrator.update())
+	while(!calibrator.update()){
+		//Serial.println("update");
 		delay(10);
-		
+	}
+	
+	Serial.println("finished");
 	tft.fillScreen(GREEN);
-	while(1)
-		delay(1000);
+	tft.setTextColor(0x0000);
+	tft.setTextSize(2);
+	
+	tft.print("Offset X: "); tft.println(calibrator.offsetX());
+	tft.print("Offset Y: "); tft.println(calibrator.offsetY());
+	tft.print("Scale X: "); tft.println(calibrator.scaleX());
+	tft.print("Scale Y: "); tft.println(calibrator.scaleY()); 
 }
 
 TSPoint waitOneTouch() {
