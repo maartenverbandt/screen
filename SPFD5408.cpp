@@ -77,8 +77,8 @@ void SPFD5408::finishCalibration()
 	Serial.print("_y[0].touch"); Serial.println(_y[0].touch);
 	Serial.print("_y[1].touch"); Serial.println(_y[1].touch);*/
 
-	_offset_x = (_x[0].tft*_x[1].touch - _x[1].tft*_x[0].touch)/(_x[1].tft - _x[0].tft);
-	_offset_y = (_y[0].tft*_y[1].touch - _y[1].tft*_y[0].touch)/(_y[1].tft - _y[0].tft);
+	_offset_x = ((float)_x[0].tft*_x[1].touch - (float)_x[1].tft*_x[0].touch)/((float)_x[1].tft - _x[0].tft);
+	_offset_y = ((float)_y[0].tft*_y[1].touch - (float)_y[1].tft*_y[0].touch)/((float)_y[1].tft - _y[0].tft);
 	
 	_scale_x = ((float)_x[1].tft - _x[0].tft)/((float)_x[1].touch - _x[0].touch);
 	_scale_y = ((float)_y[1].tft - _y[0].tft)/((float)_y[1].touch - _y[0].touch);
