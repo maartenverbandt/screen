@@ -44,8 +44,8 @@ void SPFD5408::drawCalibrationPoint(uint16_t x, uint16_t y)
 	switch(getRotation()) {
 		case 1:
 			t = x;
-			x = y;
-			y = width()  - 1 - t;
+			x = height()  - 1 - y;
+			y = t;
 			break;
 		case 2:
 			x = width()  - 1 - x;
@@ -53,8 +53,8 @@ void SPFD5408::drawCalibrationPoint(uint16_t x, uint16_t y)
 			break;
 		case 3:
 			t = x;
-			x = height() - 1 - y;
-			y = t;
+			x = y;
+			y = width() - 1 - t;
 			break;
 	}
 
