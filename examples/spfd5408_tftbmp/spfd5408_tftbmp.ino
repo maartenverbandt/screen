@@ -5,8 +5,10 @@
 
 ///////  ***** Not Tested yet on SPFD5408 - next version I do it
 
-#include <Adafruit_GFX.h>    // Core graphics library
-#include <Adafruit_TFTLCD.h> // Hardware-specific library
+//#include <Adafruit_GFX.h>    // Core graphics library
+//#include <Adafruit_TFTLCD.h> // Hardware-specific library
+#include <SPFD5408.h>
+#include <SPI.h>
 #include <SD.h>
 
 // The control pins for the LCD can be assigned to any digital or
@@ -39,17 +41,17 @@
 // There are examples in the sketch folder
 
 // our TFT wiring
-Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, A4);
+SPFD5408 tft;
 
 void setup()
 {
   Serial.begin(9600);
-   digitalWrite(35, HIGH);         //I use this on mega for LCD Backlight
+   //digitalWrite(35, HIGH);         //I use this on mega for LCD Backlight
   tft.reset();
 
   uint16_t identifier = tft.readID();
 
-  if(identifier == 0x9325) {
+  /*if(identifier == 0x9325) {
     progmemPrintln(PSTR("Found ILI9325 LCD driver"));
   } else if(identifier == 0x9328) {
     progmemPrintln(PSTR("Found ILI9328 LCD driver"));
@@ -65,7 +67,7 @@ void setup()
     progmemPrintln(PSTR("Also if using the breakout, double-check that all wiring"));
     progmemPrintln(PSTR("matches the tutorial."));
     return;
-  }
+  }*/
 
   tft.begin(identifier);
 
