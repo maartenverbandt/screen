@@ -18,7 +18,7 @@
 
 // Init TouchScreen:
 
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, SENSIBILITY);
+TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
 // LCD Pin
 
