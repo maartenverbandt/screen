@@ -1,7 +1,7 @@
 #include "tft_button.h"
 
 TFTButton::TFTButton(void (*callback)(), char* text) : 
-	Plottable(callback),
+	TFTButtonInterface(callback),
 	_button_color(BLUE),
 	_text_color(WHITE)
 {
@@ -9,7 +9,7 @@ TFTButton::TFTButton(void (*callback)(), char* text) :
 }
 
 TFTButton::TFTButton(void (*callback)(), char* text, uint16_t size_x, uint16_t size_y) : 
-	Plottable(callback, size_x, size_y),
+	TFTButtonInterface(callback, size_x, size_y),
 	_button_color(BLUE),
 	_text_color(WHITE)
 {
@@ -39,26 +39,6 @@ void TFTButton::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
 	tft.setTextSize(_text_size);
 	tft.setTextWrap(false);
 	tft.print(_text);	
-}
-
-bool TFTButton::getCheckable()
-{
-	return _checkable;
-}
-
-void TFTButton::setCheckable(bool checkable)
-{
-	_checkable = checkable;
-}
-
-bool TFTButton::getChecked()
-{
-	return _checked;
-}
-
-void TFTButton::setChecked(bool checked)
-{
-	_checked = checked;
 }
 
 char* TFTButton::getText()
