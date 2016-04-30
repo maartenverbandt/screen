@@ -19,8 +19,11 @@ class Adafruit_GFX : public Print {
   // This MUST be defined by the subclass:
   virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
   
-  // Added by MaartenVerbandt, 24/04/2016 : return control to the screen
+  // Added by MaartenVerbandt, 24/04/2016 : return control to the screen (obsolete now)
   virtual bool getControl(){return false;}; 
+  virtual void pushColors(uint16_t *data, uint8_t len, boolean first){};  
+  virtual uint16_t color565(uint8_t r, uint8_t g, uint8_t b){return 0;};
+  virtual void     setAddrWindow(int x1, int y1, int x2, int y2){};
 
   // These MAY be overridden by the subclass to provide device-specific
   // optimized code.  Otherwise 'generic' versions are used.
