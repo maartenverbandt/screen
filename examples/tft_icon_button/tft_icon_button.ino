@@ -66,6 +66,7 @@ void setup(void) {
 	page_front.addPlottable(&button_front, 110, 85);
 	page_front.addPlottable(&woof, 220, 85);
 	page_back.addPlottable(&button_back, 110, 85);
+	page_back.addPlottable(&unknown, 220, 85);
 	
 	current_page = &page_front;
 	current_page->draw(tft);
