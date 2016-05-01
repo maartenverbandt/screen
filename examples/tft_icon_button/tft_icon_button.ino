@@ -33,10 +33,11 @@ static void button_back_callback()
 static TFTButton button_front = TFTButton(button_front_callback, "Front", 100, 70);
 static TFTButton button_back = TFTButton(button_back_callback, "Back", 100, 70);
 static TFTButton button_extra = TFTButton(NULL, "Extra", 100, 70);
-static TFTIcon woof;
+static TFTIcon woof = TFTIcon(NULL,"miniwoof.bmp");
 
 void setup(void) {
 	Serial.begin(9600);
+	Serial.println("setup!");
 
 	//tft setup
 	tft.reset();
@@ -47,9 +48,7 @@ void setup(void) {
 	if (!SD.begin(10)) {
 		Serial.println("SD failed!");
 		return;
-	}
-	
-	TFTIcon woof = TFTIcon(NULL,"miniwoof.bmp");
+	} 
 	
 	page_front.addPlottable(&button_front, 110, 85);
 	page_front.addPlottable(&woof, 220, 85);
