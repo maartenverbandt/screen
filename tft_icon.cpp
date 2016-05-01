@@ -35,37 +35,61 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
 
   if((x0 >= tft.width()) || (y0 >= tft.height())) return;
 
-  Serial.println();
-  progmemPrint(PSTR("Loading image '"));
-  Serial.print(filename);
-  Serial.println('\'');
   // Open requested file on SD card
-  if ((bmpFile = SD.open(filename)) == NULL) {
-    progmemPrintln(PSTR("File not found"));
+  if ((bmpFile = SD.open(_filename)) == NULL) {
+  	Serial.println("File not found.");
+  
+    //MAKE DUMMY IMAGE
+  	setSizeX(100);
+  	setSizeY(70);
+    
+    //draw the rectangle
+	tft.fillRoundRect(x0, y0, getSizeX(), getSizeY(), 4, 0xFFFF);
+	
+	//set the centered text
+	//compute the text size
+	uint8_t text_length = 0;
+	while((text_length<20) && (_filename[text_length] != '\0')){
+		text_length++;
+	}
+	if(text_length>=20){
+		text_length = 20;
+	}
+	
+	//print button centered text
+	uint16_t cursor_x = x0 + (getSizeX() - text_length*6)/2;
+	uint16_t cursor_y = y0 + (getSizeY() - 4)/2;
+	tft.setCursor(cursor_x, cursor_y);
+	tft.setTextColor(0x0000);
+	tft.setTextSize(1);
+	tft.setTextWrap(false);
+	tft.print("/");	tft.print(_filename);	
+    
     return;
   }
 
   // Parse BMP header
   if(read16(bmpFile) == 0x4D42) { // BMP signature
-    progmemPrint(PSTR("File size: ")); Serial.println(read32(bmpFile));
+  	(void)read32(bmpFile); // Read & ignore file size data
     (void)read32(bmpFile); // Read & ignore creator bytes
     bmpImageoffset = read32(bmpFile); // Start of image data
-    progmemPrint(PSTR("Image Offset: ")); Serial.println(bmpImageoffset, DEC);
-    // Read DIB header
-    progmemPrint(PSTR("Header size: ")); Serial.println(read32(bmpFile));
+    (void)read32(bmpFile); // Read & ignore header size data
     bmpWidth  = read32(bmpFile);
     bmpHeight = read32(bmpFile);
+    
+  	setSizeX(bmpWidth);
+  	setSizeY(bmpHeight);
+  	
+  	Serial.println("File found:");
+  	Serial.println(bmpWidth);
+  	Serial.println(bmpHeight);
+    
+    //Plot the image
     if(read16(bmpFile) == 1) { // # planes -- must be '1'
       bmpDepth = read16(bmpFile); // bits per pixel
-      progmemPrint(PSTR("Bit Depth: ")); Serial.println(bmpDepth);
       if((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
-
         goodBmp = true; // Supported BMP format -- proceed!
-        progmemPrint(PSTR("Image size: "));
-        Serial.print(bmpWidth);
-        Serial.print('x');
-        Serial.println(bmpHeight);
-
+        
         // BMP rows are padded (if needed) to 4-byte boundary
         rowSize = (bmpWidth * 3 + 3) & ~3;
 
