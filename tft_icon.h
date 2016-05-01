@@ -8,7 +8,7 @@
 class TFTIcon : public TFTButtonInterface
 {
 private:
-	char filename[13];
+	char _filename[13];
 	
 	uint16_t read16(File f);
 	uint32_t read32(File f);

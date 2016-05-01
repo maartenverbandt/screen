@@ -9,7 +9,7 @@ TFTIcon::TFTIcon() :
 TFTIcon::TFTIcon(void (*callback)(), char* filename) :
 	TFTButtonInterface(callback)
 {
-	memcpy(this->filename, filename, 13);
+	memcpy(_filename, filename, 13);
 	//READ SIZE OF THE PICTURE
 }
 
