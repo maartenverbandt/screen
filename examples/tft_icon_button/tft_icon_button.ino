@@ -30,10 +30,23 @@ static void button_back_callback()
 	delay(200);
 }
 
+static void button_woof_callback()
+{
+	tft.fillScreen(0);
+	tft.setTextColor(0xFFFF);
+	tft.setTextSize(3);
+	tft.setCursor(tft.width()/2,tft.height()/2);
+	tft.print("Woof!");
+	delay(1000);
+	
+	current_page->draw(tft);
+}
+
 static TFTButton button_front = TFTButton(button_front_callback, "Front", 100, 70);
 static TFTButton button_back = TFTButton(button_back_callback, "Back", 100, 70);
 static TFTButton button_extra = TFTButton(NULL, "Extra", 100, 70);
-static TFTIcon woof = TFTIcon(NULL,"miniwoof.bmp");
+static TFTIcon woof = TFTIcon(button_woof_callback,"miniwoof.bmp");
+static TFTIcon unknown = TFTIcon(NULL,"unknown.bmp");
 
 void setup(void) {
 	Serial.begin(9600);
