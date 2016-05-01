@@ -12,8 +12,6 @@ private:
 	
 	uint16_t read16(File f);
 	uint32_t read32(File f);
-	void progmemPrint(const char *str);
-	void progmemPrintln(const char *str);
 
 public:
 	TFTIcon();

@@ -148,16 +148,13 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
         // Write any remaining data to LCD
         if(lcdidx > 0) {
           tft.pushColors(lcdbuffer, lcdidx, first);
-        } 
-        progmemPrint(PSTR("Loaded in "));
-        Serial.print(millis() - startTime);
-        Serial.println(" ms");
+        }
       } // end goodBmp
     }
+    
   }
 
   bmpFile.close();
-  if(!goodBmp) progmemPrintln(PSTR("BMP format not recognized."));
 }
 
 uint16_t TFTIcon::read16(File f) {
@@ -174,17 +171,4 @@ uint32_t TFTIcon::read32(File f) {
   ((uint8_t *)&result)[2] = f.read();
   ((uint8_t *)&result)[3] = f.read(); // MSB
   return result;
-}
-
-// Copy string from flash to serial port
-// Source string MUST be inside a PSTR() declaration!
-void TFTIcon::progmemPrint(const char *str) {
-  char c;
-  while(c = pgm_read_byte(str++)) Serial.print(c);
-}
-
-// Same as above, with trailing newline
-void TFTIcon::progmemPrintln(const char *str) {
-  progmemPrint(str);
-  Serial.println();
 }
