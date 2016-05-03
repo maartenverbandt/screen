@@ -1,16 +1,35 @@
 #include <tft_icon.h>
 
-TFTIcon::TFTIcon() :
-	TFTButtonInterface(NULL)
-{
-	//do nothing
-}
-
 TFTIcon::TFTIcon(void (*callback)(), char* filename) :
-	TFTButtonInterface(callback)
+	TFTButtonInterface(callback),
+	_header_parsed(false)
 {
 	memcpy(_filename, filename, 13);
-	//READ SIZE OF THE PICTURE
+	_image_data.signature = 0;
+}
+
+bool TFTIcon::parseHeader(bool force)
+{
+	if(!_header_parsed || force){
+		_header_parsed = true;
+		File file;
+
+		if ((file = SD.open(_filename)) != NULL) {
+			for(uint8_t k=0;k<sizeof(bmp_header_t);k++){
+				((uint8_t*)&_image_data)[k] = file.read();
+			}
+		}
+		
+		if(_image_data.signature == 0x4D42){			
+			setSizeX(_image_data.width);
+			setSizeY(_image_data.height);
+		} else { // Error while parsing header..
+		  	setSizeX(100);
+		  	setSizeY(70);
+	  	}
+	}
+	
+	return (_image_data.signature == 0x4D42);
 }
 
 #define BUFFPIXEL 20
