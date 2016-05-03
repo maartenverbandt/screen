@@ -37,9 +37,6 @@ bool TFTIcon::parseHeader(bool force)
 void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
 {
   File     bmpFile;
-  int      bmpWidth, bmpHeight;   // W+H in pixels
-  uint8_t  bmpDepth;              // Bit depth (currently must be 24)
-  uint32_t bmpImageoffset;        // Start of image data in file
   uint32_t rowSize;               // Not always = bmpWidth; may have padding
   uint8_t  sdbuffer[3*BUFFPIXEL]; // pixel in buffer (R+G+B per pixel)
   uint16_t lcdbuffer[BUFFPIXEL];  // pixel out buffer (16-bit per pixel)
@@ -53,14 +50,11 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
   boolean  first = true;
 
   if((x0 >= tft.width()) || (y0 >= tft.height())) return;
+  
 
   // Open requested file on SD card
-  if ((bmpFile = SD.open(_filename)) == NULL) {
+  if(!parseHeader()){
   	Serial.println("File not found.");
-  
-    //MAKE DUMMY IMAGE
-  	setSizeX(100);
-  	setSizeY(70);
     
     //draw the rectangle
 	tft.fillRoundRect(x0, y0, getSizeX(), getSizeY(), 4, 0xFFFF);
@@ -85,43 +79,31 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
 	tft.print("/");	tft.print(_filename);	
     
     return;
-  }
-
-  // Parse BMP header
-  if(read16(bmpFile) == 0x4D42) { // BMP signature
-  	(void)read32(bmpFile); // Read & ignore file size data
-    (void)read32(bmpFile); // Read & ignore creator bytes
-    bmpImageoffset = read32(bmpFile); // Start of image data
-    (void)read32(bmpFile); // Read & ignore header size data
-    bmpWidth  = read32(bmpFile);
-    bmpHeight = read32(bmpFile);
-    
-  	setSizeX(bmpWidth);
-  	setSizeY(bmpHeight);
+  } else {
   	
   	Serial.println("File found:");
-  	Serial.println(bmpWidth);
-  	Serial.println(bmpHeight);
+  	Serial.println(_image_data.width);
+  	Serial.println(_image_data.height);
     
     //Plot the image
-    if(read16(bmpFile) == 1) { // # planes -- must be '1'
-      bmpDepth = read16(bmpFile); // bits per pixel
-      if((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
+    if((_image_data.planes == 1) && (_image_data.depth == 24) && (_image_data.compression == 0)){
         goodBmp = true; // Supported BMP format -- proceed!
+        bmpFile = SD.open(_filename); //open file
         
         // BMP rows are padded (if needed) to 4-byte boundary
-        rowSize = (bmpWidth * 3 + 3) & ~3;
+        rowSize = (_image_data.width * 3 + 3) & ~3;
 
         // If bmpHeight is negative, image is in top-down order.
         // This is not canon but has been observed in the wild.
-        if(bmpHeight < 0) {
-          bmpHeight = -bmpHeight;
+        w = _image_data.width;
+        if(_image_data.height < 0) {
+          h = -_image_data.height;
           flip      = false;
+        } else {
+        	h = _image_data.height;
         }
 
         // Crop area to be loaded
-        w = bmpWidth;
-        h = bmpHeight;
         if((x0+w-1) >= tft.width())  w = tft.width()  - x0;
         if((y0+h-1) >= tft.height()) h = tft.height() - y0;
 
@@ -136,9 +118,9 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
           // place if the file position actually needs to change
           // (avoids a lot of cluster math in SD library).
           if(flip) // Bitmap is stored bottom-to-top order (normal BMP)
-            pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize;
+            pos = _image_data.imageoffset + (_image_data.height - 1 - row) * rowSize;
           else     // Bitmap is stored top-to-bottom
-            pos = bmpImageoffset + row * rowSize;
+            pos = _image_data.imageoffset + row * rowSize;
           if(bmpFile.position() != pos) { // Need seek?
             bmpFile.seek(pos);
             buffidx = sizeof(sdbuffer); // Force buffer reload
@@ -171,12 +153,11 @@ void TFTIcon::draw(Adafruit_GFX &tft, uint16_t x0, uint16_t y0)
       } // end goodBmp
     }
     
-  }
 
   bmpFile.close();
 }
 
-uint16_t TFTIcon::read16(File f) {
+/*uint16_t TFTIcon::read16(File f) {
   uint16_t result;
   ((uint8_t *)&result)[0] = f.read(); // LSB
   ((uint8_t *)&result)[1] = f.read(); // MSB
@@ -190,4 +171,4 @@ uint32_t TFTIcon::read32(File f) {
   ((uint8_t *)&result)[2] = f.read();
   ((uint8_t *)&result)[3] = f.read(); // MSB
   return result;
-}
+}*/
